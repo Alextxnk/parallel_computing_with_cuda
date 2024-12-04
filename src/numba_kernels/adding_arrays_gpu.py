@@ -15,6 +15,7 @@ def main():
     n = 10_000_000
     a = np.arange(n, dtype=np.float32)
     b = np.arange(n, dtype=np.float32)
+    print(f"input size: {n}")
 
     # Перенос данных на устройство (GPU) в глобальную память
     d_a = cuda.to_device(a)
@@ -41,7 +42,7 @@ def main():
     result = d_c.copy_to_host()
 
     print(f"result: {result}")
-    print(f"parallel execution using CUDA on the GPU in: {end - start:.6f} seconds")
+    print(f"parallel execution using Numba CUDA on the GPU in: {end - start:.6f} seconds")
 
 if __name__ == "__main__":
     main()

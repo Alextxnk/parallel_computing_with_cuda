@@ -14,6 +14,7 @@ def main():
     a = np.arange(n, dtype=np.float32)
     b = np.arange(n, dtype=np.float32)
     c = np.zeros(n, dtype=np.float32)
+    print(f"input size: {n}")
 
     start = time.time()
     result = adding_vectors(a, b)
