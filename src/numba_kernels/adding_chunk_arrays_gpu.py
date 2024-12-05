@@ -12,15 +12,12 @@ def cuda_addition(a, b, c):
 
 def main():
     # Создание массивов на хосте (CPU)
-    n = 10_000_000
+    n = 1_000_000_000
+    chunk_size = 10_000_000  # Размер чанка, подходящий для GPU
     a = np.arange(n, dtype=np.float32)
     b = np.arange(n, dtype=np.float32)
-    print(f"input size: {n}")
-
-    # Перенос данных на устройство (GPU) в глобальную память
-    d_a = cuda.to_device(a)
-    d_b = cuda.to_device(b)
-    d_c = cuda.device_array_like(a)  # Создание пустого массива
+    c = np.zeros_like(a, dtype=np.float32)  # Массив для результата
+    print(f"Input size: {n}, chunk size: {chunk_size}")
 
     # Получение информации об устройстве
     device = cuda.get_current_device()
@@ -31,19 +28,31 @@ def main():
     # Определение параметров запуска ядра
     # threads_per_block = device.WARP_SIZE # Количество потоков в блоке: стандартно 32 потока
     threads_per_block = 1024 # Задаем значения кратные 32
-    blocks_per_grid = (n + threads_per_block - 1) // threads_per_block # Вычисление количества блоков в сетке
+    blocks_per_grid = (chunk_size + threads_per_block - 1) // threads_per_block # Вычисление количества блоков в сетке
     print(f"threads per block: {threads_per_block}")
     print(f"blocks per grid: {blocks_per_grid}")
 
     start = time.time()
-    cuda_addition[blocks_per_grid, threads_per_block](d_a, d_b, d_c)  # Вызов ядра
-    cuda.synchronize()  # Синхронизация потоков для точного измерения
+    # Обработка данных чанками
+    for i in range(0, n, chunk_size):
+        end = min(i + chunk_size, n)  # Убедиться, что не выйдем за пределы массива
+
+        # Перенос чанков на устройство
+        d_a = cuda.to_device(a[i:end])
+        d_b = cuda.to_device(b[i:end])
+        d_c = cuda.device_array_like(d_a)
+
+        # Вызов CUDA ядра
+        cuda_addition[blocks_per_grid, threads_per_block](d_a, d_b, d_c)
+        cuda.synchronize()  # Синхронизация потоков для точного измерения времени
+
+        # Копирование результата обратно на хост
+        # Перенос результата обратно на хост (CPU)
+        c[i:end] = d_c.copy_to_host()
+
     end = time.time()
 
-    # Перенос результата обратно на хост (CPU)
-    result = d_c.copy_to_host()
-
-    print(f"result: {result}")
+    print(f"result: {c}")
     print(f"parallel execution using Numba CUDA on the GPU in: {end - start:.6f} seconds")
 
 if __name__ == "__main__":

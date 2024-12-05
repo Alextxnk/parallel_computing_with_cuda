@@ -23,7 +23,7 @@ def main():
     add_arrays = mod.get_function("add_arrays")
 
     # Создание данных
-    n = 10_000_000
+    n = 1_000_000
     a = np.arange(n, dtype=np.float32)
     b = np.arange(n, dtype=np.float32)
     c = np.zeros_like(a)
@@ -41,7 +41,7 @@ def main():
     cuda.memcpy_htod(d_b, b)
 
     # Настройка количества потоков и блоков
-    threads_per_block = 256
+    threads_per_block = 1024
     blocks_per_grid = (n + threads_per_block - 1) // threads_per_block # Вычисление количества блоков в сетке
     print(f"threads per block: {threads_per_block}")
     print(f"blocks per grid: {blocks_per_grid}")
@@ -56,7 +56,7 @@ def main():
     # Копирование результата с устройства (GPU) на хост (CPU)
     cuda.memcpy_dtoh(c, d_c)
     print(f"result: {c}")
-    print(f"parallel execution using PyCUDA on the GPU in: {end - start:.6f} seconds")
+    print(f"parallel execution using PyCUDA on the GPU in: {end - start:.10f} seconds")
 
 if __name__ == "__main__":
     main()

@@ -19,7 +19,7 @@ def multiply_matrices_sequential(a, b, c, n):
     return c
 
 def main():
-    n = 500  # размерность квадратных матриц (например, 500x500)
+    n = 10_000  # размерность квадратных матриц (например, 500x500)
     a = np.random.rand(n, n).astype(np.float32)  # случайная матрица a
     b = np.random.rand(n, n).astype(np.float32)  # случайная матрица b
     c = np.zeros((n, n), dtype=np.float32)  # результирующая матрица c
@@ -34,12 +34,12 @@ def main():
     print(f"Performing matrix multiplication with NumPy on the CPU in: {end - start:.6f} seconds\n")
 
     # Последовательное умножение матриц
-    start = time.time()
-    result = multiply_matrices_sequential(a, b, c, n)
-    end = time.time()
+    #start = time.time()
+    #result = multiply_matrices_sequential(a, b, c, n)
+    #end = time.time()
 
-    print(f"Matrix multiplication result (sequential): {result}")
-    print(f"Performing matrix multiplication sequentially on the CPU in: {end - start:.6f} seconds")
+    #print(f"Matrix multiplication result (sequential): {result}")
+    #print(f"Performing matrix multiplication sequentially on the CPU in: {end - start:.6f} seconds")
 
 if __name__ == "__main__":
     main()

@@ -10,7 +10,7 @@ def adding_arrays (a, b, c, n):
     return c
 
 def main():
-    n = 10_000_000
+    n = 1_000_000
     a = np.arange(n, dtype=np.float32)
     b = np.arange(n, dtype=np.float32)
     c = np.zeros(n, dtype=np.float32)

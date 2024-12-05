@@ -30,6 +30,12 @@ def main():
     d_b = cuda.to_device(b)
     d_c = cuda.device_array((n, n), dtype=np.float32)
 
+    # Получение информации об устройстве
+    device = cuda.get_current_device()
+    print(f"device name: {device.name.decode()}")
+    # print(f"Total memory: {device.total_memory / 1e9:.2f} GB")
+    print(f"Max threads per block: {device.MAX_THREADS_PER_BLOCK}")
+
     # Определение параметров сетки и блоков
     threads_per_block = (16, 16)  # Блоки 16x16 потоков
     blocks_per_grid_x = (n + threads_per_block[0] - 1) // threads_per_block[0]
